@@ -3,7 +3,7 @@
 //
 #include <cstddef>
 #include <unistd.h>
-
+#include <cstring>
 struct SMallocMetaData
 {
     size_t blockSize;
@@ -74,8 +74,32 @@ void * CAllocator::getNewMemBlock(size_t size) {
             return nullptr;
         }
         auto* p_sMetadata = static_cast<SMallocMetaData*>(pOldBreak);
-
+        pMetaDataHead=p_sMetadata;
+        pMetaDataTail=p_sMetadata;
+        p_sMetadata->isFree = false;
+        p_sMetadata->blockSize = size;
+        p_sMetadata->next= nullptr;
+        p_sMetadata->prev= nullptr;
+        return static_cast<void*>(static_cast<char*>(pOldBreak) + sizeof(SMallocMetaData));
     }
+    SMallocMetaData* runner = pMetaDataHead;
+    while (runner->next)
+    {
+        runner = runner->next;
+    }
+    pNewBreak = sbrk(static_cast<intptr_t>(size+sizeof(SMallocMetaData)) );
+    if(*static_cast<int*>(pNewBreak) == -1)
+    {
+        return nullptr;
+    }
+    auto* p_sMetadata       = static_cast<SMallocMetaData*>(pOldBreak);
+    runner->next            = p_sMetadata;
+    p_sMetadata->next       = nullptr;
+    p_sMetadata->prev       = runner;
+    p_sMetadata->isFree     = false;
+    p_sMetadata->blockSize  = size;
+
+    return static_cast<void*>(static_cast<char*>(pOldBreak) + sizeof(SMallocMetaData));
 }
 
 
@@ -90,4 +114,31 @@ void* smalloc(size_t size)
     }
     pMemBlock = cAllocator.getNewMemBlock(size);
     return pMemBlock;
+}
+
+void* scalloc(size_t num, size_t size)
+{
+    if(num == 0 || num*size > cAllocator.MaxSupportedBytsToAlloc)
+    {
+        return nullptr;
+    }
+    void* pDataBlock = smalloc(num*size);
+    if(!pDataBlock)
+    {
+        return nullptr;
+    }
+    std::memset(pDataBlock,0,num*size);
+    return pDataBlock;
+}
+
+void sfree(void* p)
+{
+    if(!p )
+    {
+        return;
+    }
+    auto pTemp = static_cast<char*>(p);
+    pTemp -= sizeof(SMallocMetaData);
+    auto pMetadata =static_cast<SMallocMetaData*>(static_cast<void*>(pTemp));
+    pMetadata->isFree = true;
 }
