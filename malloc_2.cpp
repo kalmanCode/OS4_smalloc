@@ -41,9 +41,26 @@ public:
    void * getNewMemBlock(size_t size);
    bool bMemoryWasAlloced();
 
-    size_t getNumOfFreeBlocks() const;
+   size_t getNumOfFreeBlocks() const;
 
-    size_t getNumOfFreeByts() const;
+   size_t getNumOfFreeByts() const;
+
+   size_t getNumOfBlocks() const;
+
+   size_t getNumOfByts() const;
+   void   increaseNumOfBlocks(size_t num);
+    void  decreaseNumOfBlocks(size_t num);
+    void  increaseNumOfFreeBlocks(size_t num);
+    void  decreaseNumOfFreeBlocks(size_t num);
+
+    void   increseNumOfBytes(size_t num);
+    void   decreaseNumOfBytes(size_t num);
+
+    void   increasNumOfFreeBytes(size_t num);
+    void   decreasNumOfFreeBytes(size_t num);
+
+    void   increase
+    unsigned int getMaxSupportedBytsToAlloc() const;
 
 };
 
@@ -85,6 +102,7 @@ void * CAllocator::getNewMemBlock(size_t size) {
     if(!bMemoryWasAlloced())
     {
         pNewBreak = sbrk(static_cast<intptr_t>(size+sizeof(SMallocMetaData)) );
+        numOfFreeBlocks++;
         if(*static_cast<int*>(pNewBreak) == -1)
         {
             return nullptr;
@@ -114,9 +132,13 @@ void * CAllocator::getNewMemBlock(size_t size) {
     p_sMetadata->prev       = runner;
     p_sMetadata->isFree     = false;
     p_sMetadata->blockSize  = size;
+    pMetaDataTail           = p_sMetadata;
 
     return static_cast<void*>(static_cast<char*>(pOldBreak) + sizeof(SMallocMetaData));
 }
+
+
+
 
 size_t CAllocator::getNumOfFreeBlocks() const {
     return numOfFreeBlocks;
@@ -124,6 +146,50 @@ size_t CAllocator::getNumOfFreeBlocks() const {
 
 size_t CAllocator::getNumOfFreeByts() const {
     return numOfFreeByts;
+}
+
+size_t CAllocator::getNumOfBlocks() const {
+    return numOfBlocks;
+}
+
+size_t CAllocator::getNumOfByts() const {
+    return numOfByts;
+}
+
+unsigned int CAllocator::getMaxSupportedBytsToAlloc() const {
+    return MaxSupportedBytsToAlloc;
+}
+
+void CAllocator::increaseNumOfBlocks(size_t num) {
+    numOfBlocks +=num;
+}
+
+void CAllocator::decreaseNumOfBlocks(size_t num) {
+    numOfBlocks -= num;
+}
+
+void CAllocator::increaseNumOfFreeBlocks(size_t num) {
+    numOfFreeBlocks += num;
+}
+
+void CAllocator::decreaseNumOfFreeBlocks(size_t num) {
+    numOfFreeBlocks -= num;
+}
+
+void CAllocator::increseNumOfBytes(size_t num) {
+    numOfByts += num;
+}
+
+void CAllocator::decreaseNumOfBytes(size_t num) {
+    numOfByts -= num;
+}
+
+void CAllocator::increasNumOfFreeBytes(size_t num) {
+    numOfFreeByts += num;
+}
+
+void CAllocator::decreasNumOfFreeBytes(size_t num) {
+    numOfFreeByts -= num;
 }
 
 
@@ -165,4 +231,72 @@ void sfree(void* p)
     pTemp -= sizeof(SMallocMetaData);
     auto pMetadata =static_cast<SMallocMetaData*>(static_cast<void*>(pTemp));
     pMetadata->isFree = true;
+}
+
+
+
+
+
+void* srealloc(void* oldp, size_t size)
+{
+    if( size == 0 || size > cAllocator.MaxSupportedBytsToAlloc )
+    {
+        return nullptr;
+    }
+
+    if(!oldp)
+    {
+        return smalloc(size);
+    }
+    char* pBlock = static_cast<char*>(oldp);
+    pBlock -= sizeof(SMallocMetaData);
+    void* ptemp = static_cast<void*>(pBlock);
+    auto pMetaData = static_cast<SMallocMetaData*>(ptemp);
+    if(pMetaData->blockSize >= size)
+    {
+
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+size_t _num_free_blocks()
+{
+    return cAllocator.getNumOfFreeBlocks();
+}
+
+size_t _num_free_bytes()
+{
+    return cAllocator.getNumOfFreeByts();
+}
+
+size_t _num_allocated_blocks()
+{
+    return cAllocator.getNumOfBlocks();
+}
+
+
+size_t _num_allocated_bytes()
+{
+    return  cAllocator.getNumOfByts();
+}
+
+size_t _num_meta_data_bytes()
+{
+    return sizeof(SMallocMetaData)*cAllocator.getNumOfBlocks();
+}
+
+
+size_t _size_meta_data()
+{
+    return sizeof(SMallocMetaData);
 }
