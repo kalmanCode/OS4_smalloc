@@ -1,4 +1,4 @@
-# Install script for directory: /home/student/Desktop/hw4
+# Install script for directory: /home/student/Desktop/Hw4/OS4_smalloc
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/student/Desktop/hw4/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/student/Desktop/Hw4/OS4_smalloc/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

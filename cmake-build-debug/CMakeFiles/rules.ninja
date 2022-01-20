@@ -42,7 +42,7 @@ rule CXX_EXECUTABLE_LINKER__hw4_Debug
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /snap/clion/178/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/student/Desktop/hw4 -B/home/student/Desktop/hw4/cmake-build-debug
+  command = /snap/clion/178/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/student/Desktop/Hw4/OS4_smalloc -B/home/student/Desktop/Hw4/OS4_smalloc/cmake-build-debug
   description = Re-running CMake...
   generator = 1
 

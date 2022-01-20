@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/student/Desktop/hw4/cmake-build-debug"
+			"value" : "/home/student/Desktop/Hw4/OS4_smalloc/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -579,7 +579,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/student/Desktop/hw4"
+			"value" : "/home/student/Desktop/Hw4/OS4_smalloc"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1111,7 +1111,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/student/Desktop/hw4/cmake-build-debug"
+			"value" : "/home/student/Desktop/Hw4/OS4_smalloc/cmake-build-debug"
 		},
 		{
 			"name" : "hw4_IS_TOP_LEVEL",
@@ -1135,7 +1135,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/student/Desktop/hw4"
+			"value" : "/home/student/Desktop/Hw4/OS4_smalloc"
 		}
 	],
 	"kind" : "cache",
