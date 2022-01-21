@@ -81,7 +81,7 @@ bool CAllocator::existsFreeBlockOfGivenSizeBytes(size_t size, void *&pMemBlock) 
             decreasNumOfFreeBytes(runner->blockSize);
 
             runner->isFree = false;
-            pMemBlock = static_cast<void*>(runner+sizeof(SMallocMetaData));
+            pMemBlock = static_cast<void*>(runner+1);
             return true;
         }
     }
@@ -249,6 +249,10 @@ void CAllocator::sfree(void *p) {
     auto pTemp = static_cast<char*>(p);
     pTemp -= sizeof(SMallocMetaData);
     auto pMetadata =static_cast<SMallocMetaData*>(static_cast<void*>(pTemp));
+    if(pMetadata->isFree)
+    {
+        return;
+    }
     pMetadata->isFree = true;
     increaseNumOfFreeBytes(pMetadata->blockSize);
     increaseNumOfFreeBlocks();
@@ -309,7 +313,9 @@ void *CAllocator::srealloc(void *oldp, size_t size) {
     pCurrentMeta->next = nullptr;
     pCurrentMeta->prev = pMetaDataTail;
     pMetaDataTail->next = pCurrentMeta;
+    pMetaDataTail       = pCurrentMeta;
     increaseNumOfBlocks();
+    increaseNumOfFreeBlocks();
     increseNumOfBytes(size);
     void* pNewMemBlk =static_cast<void*>( static_cast<char*>(pOldBreak)+sizeof(SMallocMetaData) ) ;
     std::memcpy(pNewMemBlk,oldp,size);
